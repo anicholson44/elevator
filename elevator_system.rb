@@ -20,7 +20,9 @@ class ElevatorSystem
     elevators.each(&:time_passed)
   end
 
+  # need to tie floor requests to elevator requests in some way to get the right elevator
   def floor_request(floor)
-    # TODO: implement
+    elevator = elevators.find { |e| e.current_floor == floor } # this is wrong
+    elevator.floor_request(floor) if elevator
   end
 end

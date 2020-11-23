@@ -1,10 +1,12 @@
+require './sorted_array'
+
 class Elevator
-  attr_reader :current_floor, :direction, :target_floor, :requests
-  def initialize(floor: 1, direction: :idle, target_floor: nil)
+  attr_reader :current_floor, :direction, :requests, :floor_requests
+  def initialize(floor: 1, direction: :idle)
     @current_floor = floor
-    @target_floor = target_floor
     @direction = direction
-    @requests = []
+    @requests = SortedArray.new(-> (element, request) { element.floor > request.floor })
+    @floor_requests = SortedArray.new(-> (element, request) { element > request })
   end
 
   def distance(floor)
@@ -21,17 +23,32 @@ class Elevator
   end
 
   def request(elevator_request)
-    insert_at = requests.find_index { |request| request.floor > elevator_request.floor }
-    insert_at ? requests.insert(insert_at, elevator_request) : requests << elevator_request
+    requests.insert(elevator_request)
     if direction == :idle
       @direction = current_floor > elevator_request.floor ? :down : :up
     end
   end
 
+  def floor_request(floor)
+    floor_requests.insert(floor)
+  end
+
   def time_passed
     next_floor
-    check_floor
     check_direction
+    check_floor
+  end
+
+  # Try to derive target_floor state rather than store it separately.
+  # This is probably wrong as I am running out of time. Building a solution
+  # with the concept of a target floor might have been a mistake, anyway.
+  private def target_floor
+    case direction
+    when :up
+      (floor_requests + requests.map(&:floor)).max
+    when :down
+      (floor_requests + requests.map(&:floor)).min
+    end
   end
 
   private def next_floor
@@ -45,10 +62,13 @@ class Elevator
 
   private def check_floor
     request = requests.find { |r| r.floor == current_floor }
-    return unless request
-
-    puts "Passenger(s) picked up from floor #{current_floor}"
-    @direction = request.direction
+    if request
+      puts "Passenger(s) picked up from floor #{current_floor}"
+      @direction = request.direction
+    end
+    floor_requests.select { |r| r == current_floor }.each do
+      puts "Passenger(s) dropped off on floor #{current_floor}"
+    end
   end
 
   private def check_direction

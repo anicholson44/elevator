@@ -22,6 +22,7 @@ class ElevatorSystemTest < Minitest::Test
 
     elevator_system.floor_request(7)
     elevator_system.floor_request(9)
+    assert_equal [7, 9], elevator_1.floor_requests
     elevator_system.time_passed
     elevator_system.time_passed
     elevator_system.time_passed
