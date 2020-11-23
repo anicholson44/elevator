@@ -1,9 +1,10 @@
 class Elevator
-  attr_reader :current_floor, :direction, :target_floor
-  def initialize(floor:, direction: :idle, target_floor: nil)
+  attr_reader :current_floor, :direction, :target_floor, :requests
+  def initialize(floor: 1, direction: :idle, target_floor: nil)
     @current_floor = floor
     @target_floor = target_floor
     @direction = direction
+    @requests = []
   end
 
   def distance(floor)
@@ -19,6 +20,8 @@ class Elevator
     end
   end
 
-  def request(floor:, direction:)
+  def request(elevator_request)
+    insert_at = requests.find_index { |request| request.floor > elevator_request.floor }
+    insert_at ? requests.insert(insert_at, elevator_request) : requests << elevator_request
   end
 end
