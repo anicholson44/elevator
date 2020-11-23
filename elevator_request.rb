@@ -1,6 +1,7 @@
 class ElevatorRequest
-  attr_reader :floor
-  def initialize(floor:)
+  attr_reader :floor, :direction
+  def initialize(floor:, direction:)
     @floor = floor
+    @direction = direction
   end
 end

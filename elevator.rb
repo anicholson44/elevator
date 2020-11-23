@@ -23,5 +23,28 @@ class Elevator
   def request(elevator_request)
     insert_at = requests.find_index { |request| request.floor > elevator_request.floor }
     insert_at ? requests.insert(insert_at, elevator_request) : requests << elevator_request
+    if direction == :idle
+      @direction = current_floor > elevator_request.floor ? :down : :up
+    end
+  end
+
+  def time_passed
+    next_floor
+    check_direction
+  end
+
+  private def next_floor
+    case direction
+    when :up
+      @current_floor = current_floor + 1
+    when :down
+      @current_floor = current_floor - 1
+    end
+  end
+
+  private def check_direction
+    if current_floor == target_floor
+      @direction = :idle
+    end
   end
 end

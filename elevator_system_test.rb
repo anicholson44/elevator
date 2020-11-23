@@ -7,10 +7,19 @@ class ElevatorSystemTest < Minitest::Test
     elevator_system.elevator_request(floor: 1, direction: :up)
     elevator_1 = elevator_system.elevators[0]
     assert_equal [1], elevator_1.requests.map(&:floor)
+    assert_equal [4, 4, 4], elevator_system.elevators.map(&:current_floor)
+
     elevator_system.time_passed
+    assert_equal [3, 4, 4], elevator_system.elevators.map(&:current_floor)
+
     elevator_system.time_passed
+    assert_equal [2, 4, 4], elevator_system.elevators.map(&:current_floor)
+
     elevator_system.time_passed
+    assert_equal [1, 4, 4], elevator_system.elevators.map(&:current_floor)
+
     # "Passenger(s) picked up from floor 1"
+
     elevator_system.floor_request(7)
     elevator_system.floor_request(9)
     elevator_system.time_passed

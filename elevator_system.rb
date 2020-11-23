@@ -4,7 +4,7 @@ require './elevator_request'
 class ElevatorSystem
   attr_reader :elevators, :floors
   def initialize(elevators:, floors:)
-    @elevators = elevators.times.map { Elevator.new(floor: 1) }
+    @elevators = elevators.times.map { Elevator.new(floor: 4) }
     @floors = floors
   end
 
@@ -13,11 +13,11 @@ class ElevatorSystem
       distance = current.distance(floor)
       distance > -1 && distance < closest.distance(floor) ? current : closest
     end
-    closest_elevator.request(ElevatorRequest.new(floor: floor))
+    closest_elevator.request(ElevatorRequest.new(floor: floor, direction: direction))
   end
 
   def time_passed
-    # TODO: implement
+    elevators.each(&:time_passed)
   end
 
   def floor_request(floor)
