@@ -30,6 +30,7 @@ class Elevator
 
   def time_passed
     next_floor
+    check_floor
     check_direction
   end
 
@@ -40,6 +41,14 @@ class Elevator
     when :down
       @current_floor = current_floor - 1
     end
+  end
+
+  private def check_floor
+    request = requests.find { |r| r.floor == current_floor }
+    return unless request
+
+    puts "Passenger(s) picked up from floor #{current_floor}"
+    @direction = request.direction
   end
 
   private def check_direction
